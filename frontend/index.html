@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyber Threat Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Cyber Threat Analyzer</h1>
+      <p class="subtitle">
+        Paste an email or message below and the model will classify it
+        as <strong>phishing</strong>, <strong>scam</strong>,
+        <strong>malware</strong>, or <strong>safe</strong>.
+      </p>
+    </header>
+
+    <main class="card">
+      <label for="email-text" class="label">Email / Message text</label>
+      <textarea
+        id="email-text"
+        rows="10"
+        placeholder="Paste the email body here..."
+      ></textarea>
+
+      <div class="actions">
+        <button id="analyze-btn">Analyze</button>
+        <span id="status" class="status"></span>
+      </div>
+
+      <section id="result" class="result hidden">
+        <h2>Prediction</h2>
+        <p><span class="result-label"></span></p>
+        <p class="result-score"></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Backend: FastAPI · Model: BERT (Hugging Face) ·
+        Built by Rafael Alexander Galindo
+      </p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
