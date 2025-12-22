@@ -21,6 +21,12 @@ class AnalyzeResponse(BaseModel):
     predictions: List[ThreatPrediction]
 
 
+@app.get("/")
+def root():
+    return {
+        "message": "Cyber Threat Analyzer API. Use /docs or POST /analyze.",
+    }
+
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
