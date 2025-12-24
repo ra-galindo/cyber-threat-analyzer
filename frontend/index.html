@@ -1,47 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cyber Threat Analyzer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Threat Analyzer</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="page">
-    <header>
+  <div class="app">
+    <header class="header">
       <h1>Cyber Threat Analyzer</h1>
-      <p class="subtitle">
-        Paste an email or message below and the model will classify it
-        as <strong>phishing</strong>, <strong>scam</strong>,
-        <strong>malware</strong>, or <strong>safe</strong>.
-      </p>
+      <p>Paste an email/message. The model returns top predictions.</p>
     </header>
 
     <main class="card">
-      <label for="email-text" class="label">Email / Message text</label>
-      <textarea
-        id="email-text"
-        rows="10"
-        placeholder="Paste the email body here..."
-      ></textarea>
+      <label class="label" for="text">Text to analyze</label>
+      <textarea id="text" rows="10" placeholder="Paste email content here..."></textarea>
 
-      <div class="actions">
-        <button id="analyze-btn">Analyze</button>
-        <span id="status" class="status"></span>
+      <div class="row">
+        <button id="scanBtn">Scan</button>
+        <button id="clearBtn" class="secondary">Clear</button>
+
+        <div class="api">
+          <span>API:</span>
+          <input id="apiUrl" type="text" value="http://127.0.0.1:8000" />
+        </div>
       </div>
 
-      <section id="result" class="result hidden">
-        <h2>Prediction</h2>
-        <p><span class="result-label"></span></p>
-        <p class="result-score"></p>
+      <div id="status" class="status"></div>
+
+      <section class="results">
+        <h2>Predictions</h2>
+        <div id="predictions" class="predictions"></div>
       </section>
     </main>
 
-    <footer>
-      <p>
-        Backend: FastAPI · Model: BERT (Hugging Face) ·
-        Built by Rafael Alexander Galindo
-      </p>
+    <footer class="footer">
+      <small>Tip: Start backend with <code>uvicorn main:app --reload</code>. Then hit Scan.</small>
     </footer>
   </div>
 

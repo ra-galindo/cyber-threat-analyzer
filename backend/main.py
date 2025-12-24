@@ -1,6 +1,9 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
+
+from app.model import load_model, predict
 
 app = FastAPI(
     title="Cyber Threat Analyzer API",
@@ -8,49 +11,33 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],   # later: ["https://your-frontend-domain.com"]
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class AnalyzeRequest(BaseModel):
     text: str
-
 
 class ThreatPrediction(BaseModel):
     label: str
     score: float
 
-
 class AnalyzeResponse(BaseModel):
     predictions: List[ThreatPrediction]
 
-
-@app.get("/")
-def root():
-    return {
-        "message": "Cyber Threat Analyzer API. Use /docs or POST /analyze.",
-    }
+@app.on_event("startup")
+def _startup():
+    load_model()
 
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
 
-
-
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(req: AnalyzeRequest):
-    """
-    Analyze text and return predicted threat type.
-    """
-    text = req.text.lower()
-
-    # (just to test the API):
-    if "password" in text or "account" in text:
-        label = "phishing"
-        score = 0.92
-    elif "bitcoin" in text or "crypto" in text:
-        label = "scam"
-        score = 0.85
-    else:
-        label = "safe"
-        score = 0.80
-
-    return AnalyzeResponse(
-        predictions=[ThreatPrediction(label=label, score=score)]
-    )
+    preds = predict(req.text, top_k=3)
+    return AnalyzeResponse(predictions=[ThreatPrediction(**p) for p in preds])
