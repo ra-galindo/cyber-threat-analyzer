@@ -8,24 +8,23 @@
 </head>
 <body>
   <div class="app">
+
     <header class="header">
       <h1>Cyber Threat Analyzer</h1>
-      <p>Paste an email/message. The model returns top predictions.</p>
+      <p>Analyze emails or messages for potential cyber threats using machine learning.</p>
     </header>
 
     <main class="card">
       <label class="label" for="text">Text to analyze</label>
-      <textarea id="text" rows="10" placeholder="Paste email content here..."></textarea>
+      <textarea
+        id="text"
+        rows="10"
+        placeholder="Paste an email, message, or suspicious text here..."
+      ></textarea>
 
       <div class="row">
         <button id="scanBtn">Scan</button>
         <button id="clearBtn" class="secondary">Clear</button>
-
-        <div class="api" id="apiWrap">
-          <span>API:</span>
-          <input id="apiUrl" type="text"
-                value="https://ra-galindo-cyber-threat-analyzer-api.hf.space" />
-        </div>
       </div>
 
       <div id="status" class="status"></div>
@@ -36,9 +35,45 @@
       </section>
     </main>
 
-    <footer class="footer">
-      <small>Tip: Start backend with <code>uvicorn main:app --reload</code>. Then hit Scan.</small>
-    </footer>
+    <!-- Recruiter / Project Explanation -->
+    <section class="card info">
+      <h2>How This Project Works</h2>
+
+      <p>
+        This project demonstrates an end-to-end machine learning system for detecting
+        cyber threats in textual data such as phishing emails or malicious messages.
+        The model was created as part of my group project in CPSC 556, Machine Learning Biometric Security,
+        at the University of Calgary. I then later deployed the model and built this frontend as a personal project.
+      </p>
+
+      <h3>Model</h3>
+      <p>
+        The classifier is based on a fine-tuned <strong>BERT</strong> transformer model,
+        trained on labeled cybersecurity text to recognize threat categories.
+      </p>
+
+      <h3>Backend</h3>
+      <p>
+        The model is served through a <strong>FastAPI</strong> backend deployed on
+        <strong>Hugging Face Spaces</strong>. The API exposes a simple <code>/analyze</code>
+        endpoint that returns ranked predictions with confidence scores.
+      </p>
+
+      <h3>Frontend</h3>
+      <p>
+        This frontend is a lightweight, framework-free interface built with
+        vanilla HTML, CSS, and JavaScript. It communicates directly with the
+        deployed API and visualizes prediction confidence in a user-friendly way.
+      </p>
+
+      <h3>Design Goals</h3>
+      <ul>
+        <li>Clear separation between model, API, and UI</li>
+        <li>Minimal dependencies and fast load time</li>
+        <li>Production-style deployment using real infrastructure</li>
+      </ul>
+    </section>
+
   </div>
 
   <script src="app.js"></script>

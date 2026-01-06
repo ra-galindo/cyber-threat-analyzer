@@ -1,9 +1,10 @@
+const API_BASE = "https://ra-galindo-cyber-threat-analyzer-api.hf.space";
+
 const textEl = document.getElementById("text");
 const scanBtn = document.getElementById("scanBtn");
 const clearBtn = document.getElementById("clearBtn");
 const statusEl = document.getElementById("status");
 const predictionsEl = document.getElementById("predictions");
-const apiUrlEl = document.getElementById("apiUrl");
 
 function setStatus(msg) {
   statusEl.textContent = msg || "";
@@ -11,69 +12,65 @@ function setStatus(msg) {
 
 function renderPredictions(preds) {
   predictionsEl.innerHTML = "";
-  if (!preds || preds.length === 0) {
+
+  if (!Array.isArray(preds) || preds.length === 0) {
     predictionsEl.innerHTML = `<div class="status">No predictions returned.</div>`;
     return;
   }
 
   preds.forEach(p => {
     const pct = Math.max(0, Math.min(100, (p.score || 0) * 100));
+
     const div = document.createElement("div");
     div.className = "pred";
+
     div.innerHTML = `
-      <div style="flex:1; padding-right: 12px;">
-        <div class="badge">${p.label}</div>
-        <div class="barWrap"><div class="bar" style="width:${pct.toFixed(1)}%"></div></div>
+      <div class="predRow">
+        <span class="badge">${p.label}</span>
+        <span class="score">${pct.toFixed(2)}%</span>
       </div>
-      <div class="score">${(p.score || 0).toFixed(4)}</div>
+      <div class="barWrap">
+        <div class="bar" style="width:${pct}%"></div>
+      </div>
     `;
+
     predictionsEl.appendChild(div);
   });
 }
 
 async function analyze() {
-  const apiBase = (apiUrlEl.value || "").trim().replace(/\/$/, "");
-  const text = (textEl.value || "").trim();
+  const text = textEl.value.trim();
 
-  if (!apiBase) {
-    setStatus("Set your API URL first.");
-    return;
-  }
   if (!text) {
-    setStatus("Paste some text first.");
+    setStatus("Please paste some text to analyze.");
     return;
   }
 
-  setStatus("Scanning…");
-  renderPredictions([]);
+  setStatus("Analyzing threat patterns…");
+  predictionsEl.innerHTML = "";
 
   try {
-    const res = await fetch(`${apiBase}/analyze`, {
+    const res = await fetch(`${API_BASE}/analyze`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text })
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`HTTP ${res.status}: ${errText}`);
+      throw new Error(`Backend error (${res.status})`);
     }
 
     const data = await res.json();
     renderPredictions(data.predictions);
-    setStatus("Done.");
-  } catch (e) {
-    console.error(e);
-    setStatus(`Error: ${e.message}`);
-
-    // common local dev issue: CORS
-    if (String(e.message).includes("Failed to fetch")) {
-      setStatus("Error: Failed to fetch. If backend is running, you likely need CORS enabled in FastAPI.");
-    }
+    setStatus("Analysis complete.");
+  } catch (err) {
+    console.error(err);
+    setStatus("Failed to analyze text. Backend may be unavailable.");
   }
 }
 
 scanBtn.addEventListener("click", analyze);
+
 clearBtn.addEventListener("click", () => {
   textEl.value = "";
   predictionsEl.innerHTML = "";
