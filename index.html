@@ -40,37 +40,88 @@
       <h2>How This Project Works</h2>
 
       <p>
-        This project demonstrates an end-to-end machine learning system for detecting
-        cyber threats in textual data such as phishing emails or malicious messages.
-        The model was created as part of my group project in CPSC 556, Machine Learning Biometric Security,
-        at the University of Calgary. I then later deployed the model and built this frontend as a personal project.
+        Cyber Threat Analyzer is an end-to-end NLP application that classifies cybersecurity-related
+        text such as phishing emails, malicious messages, and suspicious technical alerts using a
+        fine-tuned BERT model. The underlying classifier was developed in my CPSC 556/656 final project
+        at the University of Calgary, and I later extended it into a deployed personal project with a
+        FastAPI backend and a lightweight web frontend.
       </p>
 
-      <h3>Model</h3>
+      <h3>Problem the Project Solves</h3>
       <p>
-        The classifier is based on a fine-tuned <strong>BERT</strong> transformer model,
-        trained on labeled cybersecurity text to recognize threat categories.
+        Cyber threats often appear in text, such as phishing emails, malicious links, fake support
+        messages, or threat intelligence reports. These are difficult to catch with simple rules because
+        attackers vary wording, tone, and structure. This project focuses on classifying unstructured
+        text into cyber-related threat categories in a way that is fast, practical, and easy to test
+        through a live interface.
       </p>
 
-      <h3>Backend</h3>
+      <h3>Model and Training</h3>
       <p>
-        The model is served through a <strong>FastAPI</strong> backend deployed on
-        <strong>Hugging Face Spaces</strong>. The API exposes a simple <code>/analyze</code>
-        endpoint that returns ranked predictions with confidence scores.
+        The classifier is based on <strong>BERT-base-uncased</strong> with a sequence-classification
+        head. It was trained on a cyber threat intelligence dataset containing textualized threat
+        examples and labels. A major challenge was class imbalance, so I improved the final model using
+        label consolidation, targeted text augmentation, and class-weighted training. Compared to the
+        baseline, the final model improved from <strong>0.81 to 0.92 F1-score</strong> and from
+        <strong>0.77 to 0.94 mean Average Precision</strong>, making it much more reliable across
+        underrepresented threat classes. :contentReference[oaicite:0]{index=0} :contentReference[oaicite:1]{index=1}
       </p>
 
-      <h3>Frontend</h3>
-      <p>
-        This frontend is a lightweight, framework-free interface built with
-        vanilla HTML, CSS, and JavaScript. It communicates directly with the
-        deployed API and visualizes prediction confidence in a user-friendly way.
-      </p>
-
-      <h3>Design Goals</h3>
+      <h3>Deployment Architecture</h3>
       <ul>
-        <li>Clear separation between model, API, and UI</li>
-        <li>Minimal dependencies and fast load time</li>
-        <li>Production-style deployment using real infrastructure</li>
+        <li><strong>Model layer:</strong> fine-tuned BERT classifier hosted on Hugging Face</li>
+        <li><strong>API layer:</strong> FastAPI backend that accepts input text and returns predictions</li>
+        <li><strong>UI layer:</strong> HTML, CSS, and JavaScript frontend for interactive testing</li>
+      </ul>
+
+      <h3>How to Read the Output</h3>
+      <p>
+        When you submit text, the model returns its <strong>top 3 predicted classes</strong> along with
+        a <strong>confidence score</strong> for each one. These percentages represent how strongly the
+        model believes the text matches each category relative to the other classes it was trained on.
+      </p>
+
+      <ul>
+        <li>
+          <strong>Top prediction:</strong> the model’s best guess for the input text
+        </li>
+        <li>
+          <strong>Second and third predictions:</strong> alternative classes the model also considered
+          plausible
+        </li>
+        <li>
+          <strong>Confidence score:</strong> the model’s estimated probability for that class, shown as
+          a percentage
+        </li>
+      </ul>
+
+      <p>
+        For example, if the model predicts <strong>NEED ATTENTION: 87%</strong>,
+        <strong>no-threat: 11%</strong>, and <strong>location: 1%</strong>, that means it sees the text
+        as most likely belonging to the NEED ATTENTION category, while still assigning a smaller chance
+        to other possibilities. This is useful because cyber threat text can be ambiguous, and showing
+        multiple ranked predictions gives a better sense of uncertainty than a single hard label.
+      </p>
+
+      <h3>What the Classes Mean</h3>
+      <ul>
+        <li><strong>NEED ATTENTION:</strong> technical or suspicious content that may require investigation, such as URLs, hashes, domains, or other security-relevant indicators</li>
+        <li><strong>SOFTWARE:</strong> software-related references or tooling context</li>
+        <li><strong>attack-pattern:</strong> descriptions of tactics, techniques, or suspicious behavior patterns</li>
+        <li><strong>identity:</strong> references to users, accounts, or identity-related entities</li>
+        <li><strong>location:</strong> geographic or environment-related references appearing in security context</li>
+        <li><strong>malware:</strong> text indicating malicious software, payloads, or infected artifacts</li>
+        <li><strong>no-threat:</strong> benign or non-malicious text</li>
+        <li><strong>threat-actor:</strong> references to attacker groups or named adversaries</li>
+      </ul>
+
+      <h3>What This Project Demonstrates</h3>
+      <ul>
+        <li>Applied NLP and transformer-based text classification</li>
+        <li>Handling class imbalance with augmentation and weighted loss</li>
+        <li>Experimental evaluation using F1-score, mAP, and confusion matrices</li>
+        <li>End-to-end deployment from trained model to live web app</li>
+        <li>Practical software engineering across ML, backend APIs, and frontend integration</li>
       </ul>
     </section>
 
